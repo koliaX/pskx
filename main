@@ -1,0 +1,73 @@
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/GreenDeno/Venyx-UI-Library/main/source.lua"))()
+if game:GetService("CoreGui"):FindFirstChild("KX Gui") then
+	game:GetService("CoreGui"):FindFirstChild("KX Gui"):Destroy()
+end
+getgenv().venyx = library.new("KX Gui", 5013109572)
+
+local lp = game.Players.LocalPlayer
+-- first page
+local page = venyx:addPage("Main", 5012544693)
+local tppp = venyx:addPage("TP PAGE")
+local plast = venyx:addPage("REMOVE")
+local section1 = page:addSection("Main")
+local tpps = tppp:addSection("TP")
+local p2section1 = plast:addSection("REMOVE")
+local ChestsLoot = false
+-- local counter = 0
+local guicheck = game:GetService("CoreGui"):FindFirstChild("KX Gui")
+
+section1:addToggle("Lootchests", false, function(value)
+	ChestsLoot = value
+	while ChestsLoot and wait() do
+		local a = game.Workspace.Debree:WaitForChild("Loot_Chest", 15)
+		if a == nil then
+			return
+		end
+		for i,v in pairs(a.Drops:GetChildren()) do
+			print(i,v)
+			a.Add_To_Inventory:InvokeServer(v.Name)
+			a.Name = "Loot_Chest(Checked)"
+		end
+		if #a.Drops:GetChildren() == 0 then
+			print("nothing")
+			a.Name = "Loot_Chest(Checked)"
+		end
+	end
+end)
+local aboba = {'start'}
+-- second page
+tpps:addDropdown("TPP", aboba, function(value)
+	--print(aboba, aboba[1])
+	for i in pairs(aboba) do
+		aboba[i] = nil
+	end
+	for i,v in pairs(game.Players:GetPlayers()) do
+		table.insert(aboba, v.Name)
+	end
+	if value ~= 'start' then
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Workspace[value]:GetModelCFrame() + Vector3.new(0, 50, 0)
+	end
+	--print(value)
+	--print(aboba, aboba[1],aboba[2],aboba[3])
+end)
+-- section:updateDropdown(dropdown, title, list, callback)
+--     dropdown <instance or string> -> dropdown to edit
+--     title <string> -> title of dropdown
+--     list <table> -> content of dropdown
+-- end
+p2section1:addButton("Destroy Gui", function()
+	game:GetService("CoreGui"):FindFirstChild("KX Gui"):Destroy()
+end)
+
+venyx:SelectPage(venyx.pages[1], true)
+
+local closebutton = Instance.new("TextButton")
+closebutton.Name = "Button"
+closebutton.Parent = guicheck
+closebutton.Size = UDim2.new(0, 30, 0, 30)
+closebutton.Text = "X"
+closebutton.Position = UDim2.new(0, 200, 0, -30)
+closebutton.MouseButton1Click:Connect(function()
+	guicheck:FindFirstChild("Main").Active = not guicheck:FindFirstChild("Main").Active
+	guicheck:FindFirstChild("Main").Visible = not guicheck:FindFirstChild("Main").Visible
+end)
