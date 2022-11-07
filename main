@@ -37,16 +37,14 @@ section1:addToggle("Lootchests", false, function(value)
 	ChestsLoot = value
 	while ChestsLoot and wait() do
 		local a = game.Workspace.Debree:WaitForChild("Loot_Chest", 15)
-		if a == nil then
-			return
-		end
-		for i,v in pairs(a.Drops:GetChildren()) do
-			print(i,v)
-			a.Add_To_Inventory:InvokeServer(v.Name)
-			a.Name = "Loot_Chest(Checked)"
-		end
-		if #a.Drops:GetChildren() == 0 then
-			print("nothing")
+		if a ~= nil then
+			for i,v in pairs(a.Drops:GetChildren()) do
+				print(i,v)
+				a.Add_To_Inventory:InvokeServer(v.Name)
+			end
+			if #a.Drops:GetChildren() == 0 then
+				print("nothing")
+			end
 			a.Name = "Loot_Chest(Checked)"
 		end
 	end
