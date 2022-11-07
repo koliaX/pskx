@@ -13,11 +13,13 @@ local plast = venyx:addPage("REMOVE")
 local section1 = page:addSection("Main")
 local targetsel = page:addSection("Target things")
 local possel = posthings:addSection("Position things")
+local joithing = page:addSection("Joins")
 local p2section1 = plast:addSection("REMOVE")
 local ChestsLoot = false
 -- local counter = 0
 local guicheck = game:GetService("CoreGui"):FindFirstChild("KX Gui")
 
+local TeleportService = game:GetService("TeleportService")
 local playerlist = {}
 local target = nil
 local cpoint = nil 
@@ -83,22 +85,31 @@ targetsel:addDropdown("Get stat", {'Clan','Yen','Race','Power', 'Demon_Art', "Br
 		venyx:Notify("Stat", target.." "..value.." = "..stat)
 	end
 end)
-possel:addButton("Get Position (+ copy)", function(value)
+possel:addButton("Get Position (+ copy)", function()
 	pos = tostring(game.Players.LocalPlayer.Character.HumanoidRootPart.Position)
 	venyx:Notify("Your Position", pos)
 	setclipboard(pos)
 end)
-possel:addButton("Get CFrame (+ copy)", function(value)
+possel:addButton("Get CFrame (+ copy)", function()
 	cfram = tostring(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame)
 	venyx:Notify("Your CFrame", cfram)
 	setclipboard(cfram)
 end)
-possel:addButton("Set Checkpoint", function(value)
+possel:addButton("Set Checkpoint", function()
 	cpoint = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0,50,0)
 	venyx:Notify("Your CheckPoint CFrame", tostring(cpoint))
 end)
-possel:addButton("Tp to Checkpoint", function(value)
+possel:addButton("Tp to Checkpoint", function()
 	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = cpoint
+end)
+joithing:addButton("Rejoin", function()
+	TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
+end)
+joithing:addButton("Change server", function()
+	TeleportService:Teleport(game.PlaceId, game.Players.LocalPlayer)
+end)
+joithing:addButton("Show server id", function()
+	venyx:Notify("Your Server ID", tostring(game.JobId))
 end)
 
 p2section1:addButton("Destroy Gui", function()
