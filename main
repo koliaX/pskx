@@ -8,13 +8,28 @@ local lp = game.Players.LocalPlayer
 -- first page
 local page = venyx:addPage("Main", 5012544693)
 local tppp = venyx:addPage("TP PAGE")
+local posthings = venyx:addPage("Position")
 local plast = venyx:addPage("REMOVE")
 local section1 = page:addSection("Main")
-local tpps = tppp:addSection("TP")
+local targetsel = page:addSection("Target things")
+local possel = posthings:addSection("Position things")
 local p2section1 = plast:addSection("REMOVE")
 local ChestsLoot = false
 -- local counter = 0
 local guicheck = game:GetService("CoreGui"):FindFirstChild("KX Gui")
+
+local playerlist = {}
+local target = nil
+local cpoint = nil 
+
+local function refreshplayers()
+	for i in pairs(playerlist) do
+		playerlist[i] = nil
+	end
+	for i,v in pairs(game.Players:GetPlayers()) do
+		table.insert(playerlist, v.Name)
+	end
+end
 
 section1:addToggle("Lootchests", false, function(value)
 	ChestsLoot = value
@@ -34,27 +49,58 @@ section1:addToggle("Lootchests", false, function(value)
 		end
 	end
 end)
-local aboba = {'start'}
+
 -- second page
-tpps:addDropdown("TPP", aboba, function(value)
-	--print(aboba, aboba[1])
-	for i in pairs(aboba) do
-		aboba[i] = nil
-	end
-	for i,v in pairs(game.Players:GetPlayers()) do
-		table.insert(aboba, v.Name)
-	end
-	if value ~= 'start' then
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Workspace[value]:GetModelCFrame() + Vector3.new(0, 50, 0)
-	end
-	--print(value)
-	--print(aboba, aboba[1],aboba[2],aboba[3])
+
+targetsel:addButton("Refresh Targets", function()
+	refreshplayers()
 end)
--- section:updateDropdown(dropdown, title, list, callback)
---     dropdown <instance or string> -> dropdown to edit
---     title <string> -> title of dropdown
---     list <table> -> content of dropdown
--- end
+targetsel:addDropdown("Choose Target", playerlist, function(value)
+	target = value
+	refreshplayers()
+end)
+targetsel:addButton("TP to target", function(value)
+	if target ~= nil then
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Workspace[target]:GetModelCFrame() + Vector3.new(0, 50, 0)
+	end
+end)
+targetsel:addDropdown("Get stat", {'Clan','Yen','Race','Power', 'Demon_Art', "BreathingCurrent", "BreathingMax", "DemonCurrent", "DemonMax"},function(value)
+	if target ~= nil then
+		local stat = nil
+		if value == "BreathingCurrent" or value == "BreathingMax" or value == "DemonCurrent" or value == "DemonMax" then
+			if value == "BreathingCurrent" then
+				stat = game.ReplicatedStorage.Player_Data[target].BreathingProgress["1"].Value
+			elseif value == "BreathingMax" then
+				stat = game.ReplicatedStorage.Player_Data[target].BreathingProgress["2"].Value
+			elseif value == "DemonCurrent" then
+				stat = game.ReplicatedStorage.Player_Data[target].DemonProgress["1"].Value
+			elseif value == "DemonMax" then
+				stat = game.ReplicatedStorage.Player_Data[target].DemonProgress["2"].Value
+			end
+		else
+			stat = game.ReplicatedStorage.Player_Data[target][value].Value
+		end
+		venyx:Notify("Stat", target.." "..value.." = "..stat)
+	end
+end)
+possel:addButton("Get Position (+ copy)", function(value)
+	pos = tostring(game.Players.LocalPlayer.Character.HumanoidRootPart.Position)
+	venyx:Notify("Your Position", pos)
+	setclipboard(pos)
+end)
+possel:addButton("Get CFrame (+ copy)", function(value)
+	cfram = tostring(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame)
+	venyx:Notify("Your CFrame", cfram)
+	setclipboard(cfram)
+end)
+possel:addButton("Set Checkpoint", function(value)
+	cpoint = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0,50,0)
+	venyx:Notify("Your CheckPoint CFrame", tostring(cpoint))
+end)
+possel:addButton("Tp to Checkpoint", function(value)
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = cpoint
+end)
+
 p2section1:addButton("Destroy Gui", function()
 	game:GetService("CoreGui"):FindFirstChild("KX Gui"):Destroy()
 end)
