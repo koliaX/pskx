@@ -10,17 +10,23 @@ local page = venyx:addPage("Main", 5012544693)
 local tppp = venyx:addPage("TP PAGE")
 local posthings = venyx:addPage("Position")
 local plast = venyx:addPage("REMOVE")
-local section1 = page:addSection("Main")
+local dangerp = venyx:addPage("DANGER SCRIPTS")
+
+local section1 = page:addSection("danger mean you can ban")
+local dangers = dangerp:addSection("danger mean you can ban")
 local targetsel = page:addSection("Target things")
 local possel = posthings:addSection("Position things")
 local joithing = page:addSection("Joins")
 local p2section1 = plast:addSection("REMOVE")
+
 local ChestsLoot = false
 -- local counter = 0
 local guicheck = game:GetService("CoreGui"):FindFirstChild("KX Gui")
 
 local TeleportService = game:GetService("TeleportService")
 local playerlist = {}
+local partylist = {}
+local tparty = nil
 local target = nil
 local cpoint = nil 
 
@@ -30,6 +36,14 @@ local function refreshplayers()
 	end
 	for i,v in pairs(game.Players:GetPlayers()) do
 		table.insert(playerlist, v.Name)
+	end
+end
+local function refreshparty()
+	for i in pairs(partylist) do
+		partylist[i] = nil
+	end
+	for i,v in pairs(game.ReplicatedStorage.PartysHolder:GetChildren()) do
+		table.insert(partylist, v.Name)
 	end
 end
 
@@ -59,9 +73,19 @@ targetsel:addDropdown("Choose Target", playerlist, function(value)
 	target = value
 	refreshplayers()
 end)
-targetsel:addButton("TP to target", function(value)
+targetsel:addButton("TP to target", function()
 	if target ~= nil then
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Workspace[target]:GetModelCFrame() + Vector3.new(0, 50, 0)
+		local tptframe = nil
+		for i,v in pairs(game.ReplicatedStorage.PartysHolder:GetDescendants()) do
+			if v.Name == target then
+				tptframe = CFrame.new(v:FindFirstChild("lastpos").Value) + Vector3.new(0, 50, 0)
+			end
+			print(v.Name, target)
+		end
+		if tptframe == nil then
+			tptframe = game.Workspace[target]:GetModelCFrame() + Vector3.new(0, 50, 0)
+		end
+		lp.Character.HumanoidRootPart.CFrame = tptframe
 	end
 end)
 targetsel:addDropdown("Get stat", {'Clan','Yen','Race','Power', 'Demon_Art', "BreathingCurrent", "BreathingMax", "DemonCurrent", "DemonMax"},function(value)
@@ -84,30 +108,124 @@ targetsel:addDropdown("Get stat", {'Clan','Yen','Race','Power', 'Demon_Art', "Br
 	end
 end)
 possel:addButton("Get Position (+ copy)", function()
-	pos = tostring(game.Players.LocalPlayer.Character.HumanoidRootPart.Position)
+	pos = tostring(lp.Character.HumanoidRootPart.Position)
 	venyx:Notify("Your Position", pos)
 	setclipboard(pos)
 end)
 possel:addButton("Get CFrame (+ copy)", function()
-	cfram = tostring(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame)
+	cfram = tostring(lp.Character.HumanoidRootPart.CFrame)
 	venyx:Notify("Your CFrame", cfram)
 	setclipboard(cfram)
 end)
 possel:addButton("Set Checkpoint", function()
-	cpoint = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0,50,0)
+	cpoint = lp.Character.HumanoidRootPart.CFrame + Vector3.new(0,50,0)
 	venyx:Notify("Your CheckPoint CFrame", tostring(cpoint))
 end)
 possel:addButton("Tp to Checkpoint", function()
-	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = cpoint
+	lp.Character.HumanoidRootPart.CFrame = cpoint
 end)
 joithing:addButton("Rejoin", function()
-	TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
+	TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, lp)
 end)
 joithing:addButton("Change server", function()
-	TeleportService:Teleport(game.PlaceId, game.Players.LocalPlayer)
+	TeleportService:Teleport(game.PlaceId, lp)
 end)
 joithing:addButton("Show server id", function()
 	venyx:Notify("Your Server ID", tostring(game.JobId))
+end)
+
+dangers:addButton("Fly start (p to enable reenable) (NOT CLICK MORE 1 TIME)", function()
+	local MOUSE = lp:GetMouse()
+	local CONTROL = {F = 0,B = 0,L = 0,R = 0}
+	local speed = 100
+	local BV = nil
+	local function flystart()
+		spawn(function ()
+			while wait() do
+				local crb = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (CONTROL.F + CONTROL.B)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(CONTROL.L + CONTROL.R, (CONTROL.F + CONTROL.B) * 0.2, 0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p)) * speed
+				if BV ~= nil then
+					BV.velocity = crb
+				else
+					break
+				end
+			end
+		end)
+	end
+
+	MOUSE.KeyDown:connect(function(KEY)
+		if KEY:lower() == 'w' then
+			CONTROL.F = 1
+		elseif KEY:lower() == 's' then
+			CONTROL.B = -1
+		elseif KEY:lower() == 'a' then
+			CONTROL.L = -1 
+		elseif KEY:lower() == 'd' then 
+			CONTROL.R = 1
+		elseif KEY:lower() == 'e' then 
+			speed = speed * 3
+		elseif KEY:lower() == 'p' then 
+			if BV ~= nil then
+				BV:Destroy()
+				BV = nil
+				print('destr')
+			else
+				BV = Instance.new("BodyVelocity", lp.Character.UpperTorso)
+				flystart()
+				print('start')
+			end
+		end
+	end)
+	 
+	MOUSE.KeyUp:connect(function(KEY)
+		if KEY:lower() == 'w' then
+			CONTROL.F = 0
+		elseif KEY:lower() == 's' then
+			CONTROL.B = 0
+		elseif KEY:lower() == 'a' then
+			CONTROL.L = 0
+		elseif KEY:lower() == 'd' then
+			CONTROL.R = 0
+		elseif KEY:lower() == 'e' then 
+			speed = speed / 3
+		end
+	end)
+	venyx:Notify("Fly enable")
+end)
+
+dangers:addButton("Fly fix (if glitched)", function()
+	lp.Character.UpperTorso.BodyVelocity:Destroy()
+	print("fixed")
+end)
+
+dangers:addDropdown("Choose Party", partylist, function(value)
+	tparty = value
+	refreshparty()
+end)
+dangers:addButton("Invite Target (main page)", function()
+	if target ~= nil and tparty ~= nil then
+		local ohString1 = "Invite_Player"
+		local ohInstance2 = game:GetService("Players")[target] -- kawo
+		local ohString3 = tparty
+		local ohInstance4 = game:GetService("Players")
+
+		game:GetService("ReplicatedStorage").Remotes.To_Server.Handle_Initiate_S:FireServer(ohString1, ohInstance2, ohString3, ohInstance4)
+	end
+end)
+dangers:addToggle("INF Stamina", false, function(value)
+	if value == true then
+		game.ReplicatedStorage.PlayerValues[lp.Name].Stamina.Value = game.ReplicatedStorage.PlayerValues[lp.Name].Stamina.MaxValue
+		game.ReplicatedStorage.PlayerValues[lp.Name].Stamina.MinValue = game.ReplicatedStorage.PlayerValues[lp.Name].Stamina.MaxValue
+	else
+		game.ReplicatedStorage.PlayerValues[lp.Name].Stamina.MinValue = 0
+	end
+end)
+dangers:addToggle("INF Breath", false, function(value)
+	if value == true then
+		game.ReplicatedStorage.PlayerValues[lp.Name].Breath.Value = game.ReplicatedStorage.PlayerValues[lp.Name].Breath.MaxValue
+		game.ReplicatedStorage.PlayerValues[lp.Name].Breath.MinValue = game.ReplicatedStorage.PlayerValues[lp.Name].Breath.MaxValue
+	else
+		game.ReplicatedStorage.PlayerValues[lp.Name].Breath.MinValue = 0
+	end
 end)
 
 p2section1:addButton("Destroy Gui", function()
@@ -126,3 +244,5 @@ closebutton.MouseButton1Click:Connect(function()
 	guicheck:FindFirstChild("Main").Active = not guicheck:FindFirstChild("Main").Active
 	guicheck:FindFirstChild("Main").Visible = not guicheck:FindFirstChild("Main").Visible
 end)
+refreshplayers()
+refreshparty()
