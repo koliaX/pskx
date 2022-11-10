@@ -14,6 +14,7 @@ local dangerp = venyx:addPage("DANGER SCRIPTS")
 
 local section1 = page:addSection("danger mean you can ban")
 local dangers = dangerp:addSection("danger mean you can ban")
+local megadang = dangerp:addSection("Mega danger 99.9% ban")
 local targetsel = page:addSection("Target things")
 local possel = posthings:addSection("Position things")
 local joithing = page:addSection("Joins")
@@ -30,6 +31,8 @@ local partylist = {}
 local tparty = nil
 local target = nil
 local cpoint = nil 
+local gm = getrawmetatable(game)
+local original = gm.__namecall
 
 local function refreshplayers()
 	for i in pairs(playerlist) do
@@ -64,6 +67,7 @@ section1:addToggle("Lootchests", false, function(value)
 		end
 	end
 end)
+
 
 -- second page
 
@@ -131,8 +135,21 @@ end)
 joithing:addButton("Change server", function()
 	TeleportService:Teleport(game.PlaceId, lp)
 end)
+joithing:addButton("Main menu", function()
+	TeleportService:Teleport(2142948266, lp)
+end)
+joithing:addButton("Dungeon", function()
+	TeleportService:Teleport(11468075017, lp)
+end)
 joithing:addButton("Show server id", function()
+	setclipboard(tostring(game.JobId))
 	venyx:Notify("Your Server ID", tostring(game.JobId))
+end)
+joithing:addButton("Tp to shop (in dungeon)", function()
+	local tptsh = game.ReplicatedStorage:FindFirstChild("TeleportToShop")
+	if tptsh ~= nil then
+		tptsh:FireServer()
+	end
 end)
 
 dangers:addButton("Fly start (p to enable reenable) (NOT CLICK MORE 1 TIME)", function()
@@ -227,6 +244,35 @@ dangers:addToggle("INF Breath", false, function(value)
 	else
 		game.ReplicatedStorage.PlayerValues[lp.Name].Breath.MinValue = 0
 	end
+end)
+megadang:addToggle("Double Strike", false, function(value)
+	if value == true then
+		gm.__namecall = function(...) 
+			local args = {...}
+			local methodName = getnamecallmethod()
+			if methodName == "FireServer" then
+				if tostring(args[1]) == "Handle_Initiate_S" then
+					if tostring(args[2]) == "thunder_clap_and_flash_damage" and tostring(args[7]) ~= "double" then
+						task.wait(1)
+						args[1]:FireServer(args[2], args[3], args[4], args[5], nil, "double")
+						print("Doubled")
+						-- for i,v in pairs(args) do
+						-- 	print(i,v)
+						-- end
+					end
+				end
+			end
+			return original(...)
+		end
+	else
+		gm.__namecall = original
+	end
+end)
+megadang:addToggle("Set read only raw", false, function(value)
+	setreadonly(gm, not value)
+end)
+p2section1:addButton("Destroy Gui", function()
+	game:GetService("CoreGui"):FindFirstChild("KX Gui"):Destroy()
 end)
 
 dangers:addToggle("Autofish", false, function(value)
