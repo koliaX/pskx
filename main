@@ -325,7 +325,7 @@ end)
 megadang:addToggle("Triple Strike", false, function(value)
 	triplestrike = value
 end)
-megadang:addToggle("Triple Hit (Sword four hit)", false, function(value)
+megadang:addToggle("Triple Hit (AIR comobo will kick)", false, function(value)
 	triplehit = value
 end)
 megadang:addToggle("No knock RSlashec", false, function(value)
@@ -360,7 +360,7 @@ megadang:addToggle("Namecall spy method", false, function(value)
 				end
 			elseif methodName == "InvokeServer" then
 				if tostring(args[1]) == "Handle_Initiate_S_" then
-					if triplehit == true and tostring(args[2]) == "Sword_Combat_Slash" and args[5] ~= nil then
+					if triplehit == true and tostring(args[2]) == "Sword_Combat_Slash" and args[5] ~= nil and args[6] ~= 6 then
 						spawn(function()
 							for i=1,2 do
 								task.wait(0.1)
