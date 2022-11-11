@@ -343,7 +343,7 @@ megadang:addToggle("Namecall spy method", false, function(value)
 							for i=1,2 do
 								task.wait(0.75)
 								args[1]:FireServer(args[2], args[3], args[4], args[5], nil, "repeat")
-								print("Repeated", i)
+								--print("Repeated", i)
 							end
 						end)
 					end
@@ -355,7 +355,7 @@ megadang:addToggle("Namecall spy method", false, function(value)
 							for i=1,2 do
 								task.wait(0.1)
 								args[1]:InvokeServer(args[2], args[3], args[4], nil,args[6],args[7])
-								print("Repeated", i)
+								--print("Repeated", i)
 							end
 						end)
 					end
