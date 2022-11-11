@@ -293,6 +293,30 @@ dangers:addToggle("Lootchests", false, function(value)
 		end
 	end
 end)
+dangers:addToggle("Autofish", false, function(value)
+	AutoFish = value
+	while AutoFish and wait() do
+		local ohVector35 = lp.Character.HumanoidRootPart.Position--Vector3.new(606.030212, 271.226105, -3249.80518)
+
+		game:GetService("ReplicatedStorage").Remotes.To_Server.Handle_Initiate_S:FireServer("Fishing_Rod_Handler", os.time(), lp.Character, true, ohVector35)
+		local a = game.Workspace.Debree:WaitForChild(lp.Name.." 's fishing line")
+		task.wait(15)
+		game:GetService("ReplicatedStorage").Remotes.To_Server.Handle_Initiate_S:FireServer("Fishing_Rod_Handler", os.time(), lp.Character, "remove", nil, true)
+		task.wait(0.5)
+		fish = game.Workspace.Debree:FindFirstChild("Ouwfish") or game.Workspace.Debree:FindFirstChild("Ouwfash") or game.Workspace.Debree:FindFirstChild("Ouwfwesh")
+		if fish ~= nil then
+			fishc = fish:FindFirstChild('Center')
+			if fishc ~= nil then
+				fishc.Take_Fish.RemoteEvent:FireServer()
+			end
+		end
+		task.wait(0.5)
+	end
+end)
+dangers:addButton("Die, Death, ResetCharcter)", function()
+	lp.Character:ChangeState(15)
+end)
+
 --mega danger page
 megadang:addToggle("Triple Strike", false, function(value)
 	if value == true then
@@ -320,26 +344,6 @@ megadang:addToggle("Triple Strike", false, function(value)
 		end
 	else
 		gm.__namecall = original
-	end
-end)
-dangers:addToggle("Autofish", false, function(value)
-	AutoFish = value
-	while AutoFish and wait() do
-		local ohVector35 = lp.Character.HumanoidRootPart.Position--Vector3.new(606.030212, 271.226105, -3249.80518)
-
-		game:GetService("ReplicatedStorage").Remotes.To_Server.Handle_Initiate_S:FireServer("Fishing_Rod_Handler", os.time(), lp.Character, true, ohVector35)
-		local a = game.Workspace.Debree:WaitForChild(lp.Name.." 's fishing line")
-		task.wait(15)
-		game:GetService("ReplicatedStorage").Remotes.To_Server.Handle_Initiate_S:FireServer("Fishing_Rod_Handler", os.time(), lp.Character, "remove", nil, true)
-		task.wait(0.5)
-		fish = game.Workspace.Debree:FindFirstChild("Ouwfish") or game.Workspace.Debree:FindFirstChild("Ouwfash") or game.Workspace.Debree:FindFirstChild("Ouwfwesh")
-		if fish ~= nil then
-			fishc = fish:FindFirstChild('Center')
-			if fishc ~= nil then
-				fishc.Take_Fish.RemoteEvent:FireServer()
-			end
-		end
-		task.wait(0.5)
 	end
 end)
 megadang:addToggle("Set read only raw", false, function(value)
