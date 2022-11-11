@@ -331,8 +331,8 @@ end)
 -- 	setreadonly(gm, not value)
 -- end)
 megadang:addToggle("Namecall spy method", false, function(value)
-	setreadonly(gm, not value)
 	if value == true then
+		setreadonly(gm, false)
 		gm.__namecall = function(...) 
 			local args = {...}
 			local methodName = getnamecallmethod()
@@ -365,6 +365,7 @@ megadang:addToggle("Namecall spy method", false, function(value)
 		end
 	else
 		gm.__namecall = original
+		setreadonly(gm, true)
 	end
 end)
 -- Destroy
