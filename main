@@ -26,7 +26,7 @@ local ChestsLoot = false
 local AutoFish = false
 local triplestrike = false
 local triplehit = false
-local triplesix = false
+local triplerslash = false
 -- local counter = 0
 local guicheck = game:GetService("CoreGui"):FindFirstChild("KX Gui")
 
@@ -328,8 +328,8 @@ end)
 megadang:addToggle("Triple Hit (Sword four hit)", false, function(value)
 	triplehit = value
 end)
-megadang:addToggle("Triple Sixfold)", false, function(value)
-	triplesix = value
+megadang:addToggle("No knock RSlashec", false, function(value)
+	triplerslash = value
 end)
 -- megadang:addToggle("Set read only raw", false, function(value)
 -- 	setreadonly(gm, not value)
@@ -338,6 +338,7 @@ megadang:addToggle("Namecall spy method", false, function(value)
 	if value == true then
 		setreadonly(gm, false)
 		gm.__namecall = function(...) 
+			local noor = false
 			local args = {...}
 			local methodName = getnamecallmethod()
 			if methodName == "FireServer" then
@@ -350,14 +351,11 @@ megadang:addToggle("Namecall spy method", false, function(value)
 								--print("Repeated", i)
 							end
 						end)
-					elseif triplesix == true and tostring(args[2]) == "six_fold_damage" and tostring(args[7]) ~= "repeat" then
-						spawn(function()
-							for i=1,2 do
-								task.wait(0.75)
-								args[1]:FireServer(args[2], args[3], args[4], args[5], nil, "repeat")
-								--print("Repeated", i)
-							end
-						end)
+					elseif triplerslash == true and tostring(args[2]) == "Rapid_Slashes_Damage" and tostring(args[7]) ~= "repeat" then
+						if args[5] == true then
+							noor = true
+							args[1]:FireServer(args[2], args[3], args[4], nil, nil, "repeat")
+						end
 					end
 				end
 			elseif methodName == "InvokeServer" then
@@ -373,7 +371,9 @@ megadang:addToggle("Namecall spy method", false, function(value)
 					end
 				end
 			end
-			return original(...)
+			if noor == false then
+				return original(...)
+			end
 		end
 	else
 		gm.__namecall = original
