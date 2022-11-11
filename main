@@ -12,13 +12,15 @@ local posthings = venyx:addPage("Position")
 local plast = venyx:addPage("REMOVE")
 local dangerp = venyx:addPage("DANGER SCRIPTS")
 
-local section1 = page:addSection("danger mean you can ban")
+
 local dangers = dangerp:addSection("danger mean you can ban")
 local megadang = dangerp:addSection("Mega danger 99.9% ban")
 local targetsel = page:addSection("Target things")
 local possel = posthings:addSection("Position things")
 local joithing = page:addSection("Joins")
 local p2section1 = plast:addSection("REMOVE")
+local tpplaces = tppp:addSection("Tp places (list automaticly check first or second Map)")
+
 
 local ChestsLoot = false
 local AutoFish = false
@@ -33,6 +35,39 @@ local target = nil
 local cpoint = nil 
 local gm = getrawmetatable(game)
 local original = gm.__namecall
+local checkedcoordbosses = nil--nil
+local checkednamebosses = nil
+local checkedcoordusenpc= nil
+local checkednameusenpc = nil
+local checkednamebreath = nil
+local checkedcoordbreath = nil
+
+
+if game.PlaceId == 6152116144 then
+	checkedcoordbosses = {["Sabito"] = CFrame.new(1161, 291, -2880), ["Kaden"] = CFrame.new(-623, 330, -2908), ["Zenitsu"] = CFrame.new(-336, 474, -2423), ["Sanemi"] = CFrame.new(1737, 349, -3604), ["Shiron"] = CFrame.new(3197, 371, -3828), ["Giyu"] = CFrame.new(2932, 352, -2960), ["Nezuko"] = CFrame.new(3698, 364, -4526), ["Reaper demon"] = CFrame.new(4305, 364, -4506), ["Arrow demon"] = CFrame.new(1416, 324, -4724), ["Tamari"] = CFrame.new(1273, 318, -4616)}
+	checkedcoordusenpc = {["Repair weapon's"] = CFrame.new(269, 282, -1523), ["BDA Spin"] = CFrame.new(-79, 276, -2379), ["Claws"] = CFrame.new(-78, 354, -3168), ["Fishing rod|Fish sell"] = CFrame.new(-517, 274, -3468), ["Gourd|Souls"] = CFrame.new(2863, 316, -3886), ["Final selection"] = CFrame.new(5223, 366, -2423)}
+	checkedcoordbreath = {["Lightning breath"] = CFrame.new(-336 , 474, -2423), ["Wind breath"] = CFrame.new(1789, 334, -3508), ["Insect breath"] = CFrame.new(2880, 316, -3915), ["Water breath"] = CFrame.new(706, 261, -2402)}
+
+	checkednamebosses = {"Sabito", "Kaden", "Zenitsu", "Sanemi", "Shiron", "Giyu", "Nezuko", "Reaper demon", "Arrow demon", "Tamari"}
+	checkednameusenpc = {"Repair weapon's", "BDA Spin", "Claws", "Fishing rod|Fish sell", "Gourd|Souls", "Final selection"}
+	checkednamebreath = {"Lightning breath", "Wind breath", "Insect breath", "Water breath"}
+elseif game.PlaceId == 11468159863 then
+	checkedcoordbosses = {["Muichiro"] = CFrame.new(4428, 675, -656), ["Nomay bandit"] = CFrame.new(3549, 673, -1933), ["Akaza"] = CFrame.new(1900, 556, -149), ["Renpeke"] = CFrame.new(-1148, 625, -632), ["Rengoku"] = CFrame.new(3747, 676, -442), ["Enmu"] = CFrame.new(1684, 483, -782), ["Swamp demon"] = CFrame.new(-1262, 635, -210), ["Inosuke"] = CFrame.new(1685, 300, -364)} 
+	checkedcoordusenpc = {["Fishing rod|Haori"] = CFrame.new(1223, 570, 50), ["Fish sell"] = CFrame.new(2011, 483, -746), ["Soryu"] = CFrame.new(1217, 569, 126), ["Repair weapon's"] = CFrame.new(3653, 673, -2248), ["Train|Ticket"] = CFrame.new(788, 498, 916), ["Item Sell"] = CFrame.new(-79, 601, -353), ["Dungeon"] = CFrame.new(-142, 611, -501)}
+	checkedcoordbreath = {["Mist breath"] = CFrame.new(4318, 675, -712), ["Beast breath"] = CFrame.new(1685, 300, -364), ["Flame breath"] = CFrame.new(-327, 602, -537)} 
+
+	checkednamebosses = {"Muichiro", "Nomay bandit", "Akaza", "Renpeke", "Rengoku", "Enmu", "Swamp demon", "Inosuke"}
+	checkednameusenpc = {"Fishing rod|Haori", "Fish sell", "Soryu", "Repair weapon's", "Train|Ticket", "Item Sell", "Dungeon"}
+	checkednamebreath = {"Mist breath", "Beast breath", "Flame breath"}
+end
+local cordbosses = checkedcoordbosses
+local cordusenpc = checkedcoordusenpc
+local cordbreath = checkedcoordbreath
+
+local namebosses = checkednamebosses
+local nameusenpc = checkednameusenpc
+local namebreath = checkednamebreath
+
 
 local function refreshplayers()
 	for i in pairs(playerlist) do
@@ -51,25 +86,10 @@ local function refreshparty()
 	end
 end
 
-section1:addToggle("Lootchests", false, function(value)
-	ChestsLoot = value
-	while ChestsLoot and wait() do
-		local a = game.Workspace.Debree:WaitForChild("Loot_Chest", 15)
-		if a ~= nil then
-			for i,v in pairs(a.Drops:GetChildren()) do
-				print(i,v)
-				a.Add_To_Inventory:InvokeServer(v.Name)
-			end
-			if #a.Drops:GetChildren() == 0 then
-				print("nothing")
-			end
-			a.Name = "Loot_Chest(Checked)"
-		end
-	end
-end)
 
 
--- second page
+
+-- Target Page
 
 targetsel:addButton("Refresh Targets", function()
 	refreshplayers()
@@ -112,6 +132,7 @@ targetsel:addDropdown("Get stat", {'Clan','Yen','Race','Power', 'Demon_Art', "Br
 		venyx:Notify("Stat", target.." "..value.." = "..stat)
 	end
 end)
+-- Position page
 possel:addButton("Get Position (+ copy)", function()
 	pos = tostring(lp.Character.HumanoidRootPart.Position)
 	venyx:Notify("Your Position", pos)
@@ -129,6 +150,7 @@ end)
 possel:addButton("Tp to Checkpoint", function()
 	lp.Character.HumanoidRootPart.CFrame = cpoint
 end)
+-- Server page
 joithing:addButton("Rejoin", function()
 	TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, lp)
 end)
@@ -151,7 +173,17 @@ joithing:addButton("Tp to shop (in dungeon)", function()
 		tptsh:FireServer()
 	end
 end)
-
+-- Places page
+tpplaces:addDropdown("Place to tp (Bosses)", namebosses ,function(value)
+	lp.Character.HumanoidRootPart.CFrame = cordbosses[value] + Vector3.new(0,50,0)
+end)
+tpplaces:addDropdown("Place to tp (Useful npc)", nameusenpc ,function(value)
+	lp.Character.HumanoidRootPart.CFrame = cordusenpc[value] + Vector3.new(0,50,0)
+end)
+tpplaces:addDropdown("Place to tp (Breath teacher)", namebreath ,function(value)
+	lp.Character.HumanoidRootPart.CFrame = cordbreath[value] + Vector3.new(0,50,0)
+end)
+--danger page
 dangers:addButton("Fly start (p to enable reenable) (NOT CLICK MORE 1 TIME)", function()
 	local MOUSE = lp:GetMouse()
 	local CONTROL = {F = 0,B = 0,L = 0,R = 0}
@@ -245,17 +277,39 @@ dangers:addToggle("INF Breath", false, function(value)
 		game.ReplicatedStorage.PlayerValues[lp.Name].Breath.MinValue = 0
 	end
 end)
-megadang:addToggle("Double Strike", false, function(value)
+dangers:addToggle("Lootchests", false, function(value)
+	ChestsLoot = value
+	while ChestsLoot and wait() do
+		local a = game.Workspace.Debree:WaitForChild("Loot_Chest", 15)
+		if a ~= nil then
+			for i,v in pairs(a.Drops:GetChildren()) do
+				print(i,v)
+				a.Add_To_Inventory:InvokeServer(v.Name)
+			end
+			if #a.Drops:GetChildren() == 0 then
+				print("nothing")
+			end
+			a.Name = "Loot_Chest(Checked)"
+		end
+	end
+end)
+--mega danger page
+megadang:addToggle("Triple Strike", false, function(value)
 	if value == true then
 		gm.__namecall = function(...) 
 			local args = {...}
 			local methodName = getnamecallmethod()
 			if methodName == "FireServer" then
 				if tostring(args[1]) == "Handle_Initiate_S" then
-					if tostring(args[2]) == "thunder_clap_and_flash_damage" and tostring(args[7]) ~= "double" then
-						task.wait(1)
-						args[1]:FireServer(args[2], args[3], args[4], args[5], nil, "double")
-						print("Doubled")
+					if tostring(args[2]) == "thunder_clap_and_flash_damage" and tostring(args[7]) ~= "repeat" then
+						spawn(function()
+							for i=1,2 do
+								task.wait(0.75)
+								args[1]:FireServer(args[2], args[3], args[4], args[5], nil, "repeat")
+								print("Repeated", i)
+							end
+						end)
+						
 						-- for i,v in pairs(args) do
 						-- 	print(i,v)
 						-- end
@@ -268,13 +322,6 @@ megadang:addToggle("Double Strike", false, function(value)
 		gm.__namecall = original
 	end
 end)
-megadang:addToggle("Set read only raw", false, function(value)
-	setreadonly(gm, not value)
-end)
-p2section1:addButton("Destroy Gui", function()
-	game:GetService("CoreGui"):FindFirstChild("KX Gui"):Destroy()
-end)
-
 dangers:addToggle("Autofish", false, function(value)
 	AutoFish = value
 	while AutoFish and wait() do
@@ -295,6 +342,15 @@ dangers:addToggle("Autofish", false, function(value)
 		task.wait(0.5)
 	end
 end)
+megadang:addToggle("Set read only raw", false, function(value)
+	setreadonly(gm, not value)
+end)
+-- Destroy
+p2section1:addButton("Destroy Gui", function()
+	game:GetService("CoreGui"):FindFirstChild("KX Gui"):Destroy()
+end)
+
+
 
 p2section1:addButton("Destroy Gui", function()
 	game:GetService("CoreGui"):FindFirstChild("KX Gui"):Destroy()
