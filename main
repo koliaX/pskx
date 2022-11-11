@@ -26,6 +26,7 @@ local ChestsLoot = false
 local AutoFish = false
 local triplestrike = false
 local triplehit = false
+local triplesix = false
 -- local counter = 0
 local guicheck = game:GetService("CoreGui"):FindFirstChild("KX Gui")
 
@@ -327,6 +328,9 @@ end)
 megadang:addToggle("Triple Hit (Sword four hit)", false, function(value)
 	triplehit = value
 end)
+megadang:addToggle("Triple Hit (Sword four hit)", false, function(value)
+	triplesix = value
+end)
 -- megadang:addToggle("Set read only raw", false, function(value)
 -- 	setreadonly(gm, not value)
 -- end)
@@ -339,6 +343,14 @@ megadang:addToggle("Namecall spy method", false, function(value)
 			if methodName == "FireServer" then
 				if tostring(args[1]) == "Handle_Initiate_S" then
 					if triplestrike == true and tostring(args[2]) == "thunder_clap_and_flash_damage" and tostring(args[7]) ~= "repeat" then
+						spawn(function()
+							for i=1,2 do
+								task.wait(0.75)
+								args[1]:FireServer(args[2], args[3], args[4], args[5], nil, "repeat")
+								--print("Repeated", i)
+							end
+						end)
+					elseif triplesix == true and tostring(args[2]) == "six_fold_damage" and tostring(args[7]) ~= "repeat" then
 						spawn(function()
 							for i=1,2 do
 								task.wait(0.75)
