@@ -314,7 +314,7 @@ dangers:addToggle("Autofish", false, function(value)
 	end
 end)
 dangers:addButton("Die, Death, ResetCharcter)", function()
-	lp.Character:ChangeState(15)
+	lp.Character.Humanoid:ChangeState(15)
 end)
 
 --mega danger page
