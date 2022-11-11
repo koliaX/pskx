@@ -328,7 +328,7 @@ end)
 megadang:addToggle("Triple Hit (Sword four hit)", false, function(value)
 	triplehit = value
 end)
-megadang:addToggle("Triple Hit (Sword four hit)", false, function(value)
+megadang:addToggle("Triple Sixfold)", false, function(value)
 	triplesix = value
 end)
 -- megadang:addToggle("Set read only raw", false, function(value)
