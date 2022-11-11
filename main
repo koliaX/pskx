@@ -24,6 +24,8 @@ local tpplaces = tppp:addSection("Tp places (list automaticly check first or sec
 
 local ChestsLoot = false
 local AutoFish = false
+local triplestrike = false
+local triplehit = false
 -- local counter = 0
 local guicheck = game:GetService("CoreGui"):FindFirstChild("KX Gui")
 
@@ -41,6 +43,7 @@ local checkedcoordusenpc= nil
 local checkednameusenpc = nil
 local checkednamebreath = nil
 local checkedcoordbreath = nil
+
 
 
 if game.PlaceId == 6152116144 then
@@ -319,13 +322,23 @@ end)
 
 --mega danger page
 megadang:addToggle("Triple Strike", false, function(value)
+	triplestrike = value
+end)
+megadang:addToggle("Triple Hit (Sword four hit)", false, function(value)
+	triplehit = value
+end)
+-- megadang:addToggle("Set read only raw", false, function(value)
+-- 	setreadonly(gm, not value)
+-- end)
+megadang:addToggle("Namecall spy method", false, function(value)
+	setreadonly(gm, not value)
 	if value == true then
 		gm.__namecall = function(...) 
 			local args = {...}
 			local methodName = getnamecallmethod()
 			if methodName == "FireServer" then
 				if tostring(args[1]) == "Handle_Initiate_S" then
-					if tostring(args[2]) == "thunder_clap_and_flash_damage" and tostring(args[7]) ~= "repeat" then
+					if triplestrike == true and tostring(args[2]) == "thunder_clap_and_flash_damage" and tostring(args[7]) ~= "repeat" then
 						spawn(function()
 							for i=1,2 do
 								task.wait(0.75)
@@ -333,10 +346,18 @@ megadang:addToggle("Triple Strike", false, function(value)
 								print("Repeated", i)
 							end
 						end)
-						
-						-- for i,v in pairs(args) do
-						-- 	print(i,v)
-						-- end
+					end
+				end
+			elseif methodName == "InvokeServer" then
+				if tostring(args[1]) == "Handle_Initiate_S_" then
+					if triplehit == true and tostring(args[2]) == "Sword_Combat_Slash" and args[5] ~= nil then
+						spawn(function()
+							for i=1,2 do
+								task.wait(0.1)
+								args[1]:InvokeServer(args[2], args[3], args[4], nil,args[6],args[7])
+								print("Repeated", i)
+							end
+						end)
 					end
 				end
 			end
@@ -345,9 +366,6 @@ megadang:addToggle("Triple Strike", false, function(value)
 	else
 		gm.__namecall = original
 	end
-end)
-megadang:addToggle("Set read only raw", false, function(value)
-	setreadonly(gm, not value)
 end)
 -- Destroy
 p2section1:addButton("Destroy Gui", function()
