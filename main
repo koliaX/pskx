@@ -26,7 +26,9 @@ local ChestsLoot = false
 local AutoFish = false
 local triplestrike = false
 local triplehit = false
-local triplerslash = false
+local noknocklash = false
+local aircombo = false
+local noknockhit = false
 -- local counter = 0
 local guicheck = game:GetService("CoreGui"):FindFirstChild("KX Gui")
 
@@ -328,8 +330,14 @@ end)
 megadang:addToggle("Triple Hit (AIR comobo will kick)", false, function(value)
 	triplehit = value
 end)
+megadang:addToggle("No multiply four hit (to prevent kick from triple air combo)", false, function(value)
+	aircombo = value
+end)
 megadang:addToggle("No knock RSlashec", false, function(value)
-	triplerslash = value
+	noknocklash = value
+end)
+megadang:addToggle("No knock hits (insect)", false, function(value)
+	noknockhit = value
 end)
 -- megadang:addToggle("Set read only raw", false, function(value)
 -- 	setreadonly(gm, not value)
@@ -351,23 +359,39 @@ megadang:addToggle("Namecall spy method", false, function(value)
 								--print("Repeated", i)
 							end
 						end)
-					elseif triplerslash == true and tostring(args[2]) == "Rapid_Slashes_Damage" and tostring(args[7]) ~= "repeat" then
+					elseif noknocklash == true and tostring(args[2]) == "Rapid_Slashes_Damage" and tostring(args[7]) ~= "repeat" then
 						if args[5] == true then
 							noor = true
+							print('nofistkick')
 							args[1]:FireServer(args[2], args[3], args[4], nil, nil, "repeat")
 						end
+					elseif noknockhit == true and tostring(args[2]) == "fist_combat" and args[5] ~= nil and args[8] ~= nil then
+						args[1]:FireServer(args[2], args[3], args[4], nil,args[6],args[7])
+						print('noknockhit')
+						noor = true
 					end
 				end
 			elseif methodName == "InvokeServer" then
 				if tostring(args[1]) == "Handle_Initiate_S_" then
-					if triplehit == true and tostring(args[2]) == "Sword_Combat_Slash" and args[5] ~= nil and args[6] ~= 6 then
-						spawn(function()
-							for i=1,2 do
-								task.wait(0.1)
-								args[1]:InvokeServer(args[2], args[3], args[4], nil,args[6],args[7])
-								--print("Repeated", i)
-							end
-						end)
+					if tostring(args[2]) == "Sword_Combat_Slash" and args[5] ~= nil and args[7] ~= 6 and args[7] ~= 7 then
+						if aircombo == true and args[7] == 4 then print('nokick');
+						elseif triplehit == true then
+							spawn(function()
+								for i=1,2 do
+									task.wait(0.1)
+									args[1]:InvokeServer(args[2], args[3], args[4], nil,args[6],args[7])
+									--print("Repeated", i)
+								end
+							end)
+						end
+					-- elseif tostring(args[2]) == "fist_combat" and args[5] ~= nil then
+					-- 	spawn(function()
+					-- 		for i=1,2 do
+					-- 			task.wait(0.1)
+					-- 			args[1]:InvokeServer(args[2], args[3], args[4], nil,args[6],args[7])
+					-- 			print("Repeated", i)
+					-- 		end
+					-- 	end)
 					end
 				end
 			end
