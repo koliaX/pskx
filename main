@@ -355,6 +355,13 @@ megadang:addToggle("Reduce cd rapid slashes to 6", false, function(value)
 	end
 	lp.PlayerGui.Power_Adder.Thunder_Breathing.Skills["Rapid Slashes"].CoolDown.Value = cdra
 end)
+megadang:addToggle("No delay between moves", false, function(value)
+	local dbm = 0.25
+	if value == true then
+		dbm = 0
+	end
+	require(game:GetService("ReplicatedStorage").Modules.Client["Player_skills_handler"]).delay_between_moves = dbm
+end)
 -- megadang:addToggle("Set read only raw", false, function(value)
 -- 	setreadonly(gm, not value)
 -- end)
