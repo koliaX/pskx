@@ -322,7 +322,9 @@ end)
 dangers:addButton("Die, Death, ResetCharcter)", function()
 	lp.Character.Humanoid:ChangeState(15)
 end)
-
+dangers:addButton("Remove sun damage", function()
+	game:GetService("ReplicatedStorage").Remotes.To_Server.Sun_Damage:Destroy()
+end)
 --mega danger page
 megadang:addToggle("Triple Strike", false, function(value)
 	triplestrike = value
