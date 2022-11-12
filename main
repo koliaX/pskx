@@ -339,6 +339,20 @@ end)
 megadang:addToggle("No knock hits (insect)", false, function(value)
 	noknockhit = value
 end)
+megadang:addToggle("Reduce cd thunder clap to 9", false, function(value)
+	local cdra = 12
+	if value == true then
+		cdra = 8
+	end
+	lp.PlayerGui.Power_Adder.Thunder_Breathing.Skills["Thunder Clap"].CoolDown.Value = cdra
+end)
+megadang:addToggle("Reduce cd rapid slashes to 6", false, function(value)
+	local cdra = 12
+	if value == true then
+		cdra = 6
+	end
+	lp.PlayerGui.Power_Adder.Thunder_Breathing.Skills["Rapid Slashes"].CoolDown.Value = cdra
+end)
 -- megadang:addToggle("Set read only raw", false, function(value)
 -- 	setreadonly(gm, not value)
 -- end)
@@ -362,12 +376,12 @@ megadang:addToggle("Namecall spy method", false, function(value)
 					elseif noknocklash == true and tostring(args[2]) == "Rapid_Slashes_Damage" and tostring(args[7]) ~= "repeat" then
 						if args[5] == true then
 							noor = true
-							print('nofistkick')
+							--print('nofistkick')
 							args[1]:FireServer(args[2], args[3], args[4], nil, nil, "repeat")
 						end
 					elseif noknockhit == true and tostring(args[2]) == "fist_combat" and args[5] ~= nil and args[8] ~= nil then
 						args[1]:FireServer(args[2], args[3], args[4], nil,args[6],args[7])
-						print('noknockhit')
+						--print('noknockhit')
 						noor = true
 					end
 				end
