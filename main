@@ -325,6 +325,9 @@ end)
 dangers:addButton("Remove sun damage", function()
 	game:GetService("ReplicatedStorage").Remotes.To_Server.Sun_Damage:Destroy()
 end)
+dangers:addToggle("Super health regen", false, function(value)
+	game.ReplicatedStorage.Remotes.heal_tang123asd:FireServer(value)
+end)
 --mega danger page
 megadang:addToggle("Triple Strike", false, function(value)
 	triplestrike = value
