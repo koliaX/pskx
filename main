@@ -35,6 +35,7 @@ local guicheck = game:GetService("CoreGui"):FindFirstChild("KX Gui")
 local TeleportService = game:GetService("TeleportService")
 local playerlist = {}
 local partylist = {}
+local baobab = nil
 local tparty = nil
 local target = nil
 local cpoint = nil 
@@ -91,7 +92,18 @@ local function refreshparty()
 		table.insert(partylist, v.Name)
 	end
 end
-
+local function tptcf(cf)
+	baobab = Instance.new("Part", workspace)
+	baobab.CFrame = cf
+	baobab.Name = "Baobab"
+	baobab.Anchored = true
+	wld = Instance.new("Weld", baobab)
+	wld.Name = "WLD"
+	workspace.Baobab.WLD.Part0 = baobab
+	workspace.Baobab.WLD.Part1 = game.Players.LocalPlayer.Character.HumanoidRootPart
+	task.wait(0.5)
+	baobab:Destroy()
+end
 
 
 
@@ -116,7 +128,7 @@ targetsel:addButton("TP to target", function()
 		if tptframe == nil then
 			tptframe = game.Workspace[target]:GetModelCFrame() + Vector3.new(0, 50, 0)
 		end
-		lp.Character.HumanoidRootPart.CFrame = tptframe
+		tptcf(tptframe)
 	end
 end)
 targetsel:addDropdown("Get stat", {'Clan','Yen','Race','Power', 'Demon_Art', "BreathingCurrent", "BreathingMax", "DemonCurrent", "DemonMax"},function(value)
@@ -180,14 +192,30 @@ joithing:addButton("Tp to shop (in dungeon)", function()
 	end
 end)
 -- Places page
+tpplaces:addToggle("Smaller kick chance when tp (when die reenable)", false, function(value)
+	if value == true then
+		baobab = Instance.new("Part", workspace)
+		baobab.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+		baobab.Name = "Baobab"
+		baobab.CanCollide = true
+		baobab.Size = Vector3.new(0.1,0.1,0.1)
+		wld = Instance.new("Weld", baobab)
+		wld.Name = "WLD"
+		workspace.Baobab.WLD.Part0 = baobab
+		workspace.Baobab.WLD.Part1 = game.Players.LocalPlayer.Character.HumanoidRootPart
+		--baobab.Anchored = true
+	else
+		baobab:Destroy()
+	end
+end)
 tpplaces:addDropdown("Place to tp (Bosses)", namebosses ,function(value)
-	lp.Character.HumanoidRootPart.CFrame = cordbosses[value] + Vector3.new(0,50,0)
+	tptcf(cordbosses[value])
 end)
 tpplaces:addDropdown("Place to tp (Useful npc)", nameusenpc ,function(value)
-	lp.Character.HumanoidRootPart.CFrame = cordusenpc[value] + Vector3.new(0,50,0)
+	tptcf(cordusenpc[value])
 end)
 tpplaces:addDropdown("Place to tp (Breath teacher)", namebreath ,function(value)
-	lp.Character.HumanoidRootPart.CFrame = cordbreath[value] + Vector3.new(0,50,0)
+	tptcf(cordbreath[value])
 end)
 --danger page
 dangers:addButton("Fly start (p to enable reenable) (NOT CLICK MORE 1 TIME)", function()
